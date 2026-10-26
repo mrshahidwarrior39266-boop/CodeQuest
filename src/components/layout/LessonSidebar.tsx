@@ -1,18 +1,125 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLearningStore } from '../../store/useLearningStore';
-import { motion, AnimatePresence } from 'framer-motion';
-import { CheckCircle2, Circle, ChevronLeft, ChevronRight, Layers, Clock, ListOrdered } from 'lucide-react';
+import { CheckCircle2, Circle, ChevronLeft, ChevronRight, Layers, Clock, X } from 'lucide-react';
 
 export function LessonSidebar({ collapsed, onToggle }: { collapsed: boolean; onToggle: () => void }) {
   const { currentLesson, currentStepIndex, trace, jumpToStep } = useLearningStore();
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   if (!currentLesson) return null;
 
   const totalSteps = trace.length;
 
+  // ── MOBILE SLIDE-OVER DRAWER (When open on screens < 768px) ──
+  if (isMobile) {
+    if (collapsed) return null;
+
+    return (
+      <div className="fixed inset-0 z-50 flex">
+        {/* Backdrop */}
+        <div
+          onClick={onToggle}
+          className="fixed inset-0 bg-black/70 backdrop-blur-sm transition-opacity"
+        />
+
+        {/* Drawer Panel */}
+        <div
+          className="relative w-72 max-w-[85vw] h-full flex flex-col z-10 shadow-2xl overflow-hidden"
+          style={{
+            background: '#100a06',
+            borderRight: '1px solid rgba(110, 78, 55, 0.4)',
+          }}
+        >
+          {/* Header */}
+          <div
+            className="px-4 py-3 flex items-center justify-between border-b"
+            style={{ borderColor: 'rgba(110, 78, 55, 0.25)', background: '#160e08' }}
+          >
+            <div className="flex items-center gap-2 min-w-0">
+              <span className="text-xl flex-shrink-0">{currentLesson.icon}</span>
+              <div className="min-w-0">
+                <p className="text-xs font-bold leading-tight truncate text-platinum">
+                  {currentLesson.title}
+                </p>
+                <p className="text-[10px] text-[#888] truncate">{currentLesson.category}</p>
+              </div>
+            </div>
+
+            <button
+              onClick={onToggle}
+              className="p-1 rounded-lg text-[#888] hover:text-white"
+            >
+              <X size={18} />
+            </button>
+          </div>
+
+          {/* Progress bar */}
+          <div className="px-4 py-2 border-b border-mocha-900/30">
+            <div className="flex items-center gap-2">
+              <div className="flex-1 h-1 rounded-full overflow-hidden bg-mocha-950">
+                <div
+                  className="h-full rounded-full transition-all duration-300"
+                  style={{
+                    width: `${(currentStepIndex / Math.max(1, totalSteps - 1)) * 100}%`,
+                    background: 'linear-gradient(to right, #6F4E37, #E6E0F0)',
+                  }}
+                />
+              </div>
+              <span className="text-[10px] font-mono font-bold text-lavender">
+                {Math.round((currentStepIndex / Math.max(1, totalSteps - 1)) * 100)}%
+              </span>
+            </div>
+          </div>
+
+          {/* Steps List */}
+          <div className="flex-1 overflow-y-auto py-2 px-1">
+            {trace.map((step, i) => {
+              const isCurrent = i === currentStepIndex;
+              const isDone = i < currentStepIndex;
+              return (
+                <button
+                  key={i}
+                  onClick={() => {
+                    jumpToStep(i);
+                    onToggle(); // Close drawer on selection on mobile
+                  }}
+                  className="w-full text-left px-3 py-2 flex items-start gap-2.5 rounded-lg mb-0.5 transition-all"
+                  style={{
+                    background: isCurrent ? 'rgba(110, 78, 55, 0.3)' : 'transparent',
+                    borderLeft: isCurrent ? '3px solid #E6E0F0' : '3px solid transparent',
+                  }}
+                >
+                  <span className="mt-0.5 flex-shrink-0" style={{ color: isDone ? '#6F4E37' : isCurrent ? '#E6E0F0' : '#444' }}>
+                    {isDone ? <CheckCircle2 size={13} /> : <Circle size={13} />}
+                  </span>
+                  <div className="min-w-0">
+                    <p className="text-xs font-medium truncate" style={{ color: isCurrent ? '#E5E4E2' : '#888' }}>
+                      Step {i + 1}
+                    </p>
+                    <p className="text-[10px] truncate font-mono text-lavender-300">
+                      {step.event.replace('_', ' ')} · L{step.line}
+                    </p>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ── DESKTOP INLINE RAIL (Screens >= 768px) ──
   return (
     <div
-      className="flex flex-col h-full relative transition-all duration-300 flex-shrink-0"
+      className="hidden md:flex flex-col h-full relative transition-all duration-300 flex-shrink-0"
       style={{
         width: collapsed ? 44 : 240,
         background: '#0d0804',
@@ -20,7 +127,7 @@ export function LessonSidebar({ collapsed, onToggle }: { collapsed: boolean; onT
         overflow: 'hidden',
       }}
     >
-      {/* ── COLLAPSED VIEW: Unmissable Clickable Strip ── */}
+      {/* ── COLLAPSED VIEW: Clickable Strip ── */}
       {collapsed ? (
         <button
           onClick={onToggle}
@@ -28,7 +135,6 @@ export function LessonSidebar({ collapsed, onToggle }: { collapsed: boolean; onT
           title="Click arrow to bring back sidebar"
           aria-label="Expand sidebar"
         >
-          {/* Big glowing arrow button to expand and bring back */}
           <div
             className="w-8 h-8 rounded-lg flex items-center justify-center transition-all group-hover:scale-110 shadow-lg ring-1 ring-lavender/30"
             style={{
@@ -43,7 +149,6 @@ export function LessonSidebar({ collapsed, onToggle }: { collapsed: boolean; onT
 
           <span className="text-base mt-1">{currentLesson.icon}</span>
 
-          {/* Rotated label so it's super clear */}
           <span
             className="text-[10px] font-bold uppercase tracking-widest transition-colors font-mono"
             style={{
@@ -56,7 +161,6 @@ export function LessonSidebar({ collapsed, onToggle }: { collapsed: boolean; onT
             Open Steps ➔
           </span>
 
-          {/* Step indicator */}
           <div className="mt-auto mb-4 text-[10px] font-mono" style={{ color: '#686765' }}>
             {currentStepIndex + 1}/{totalSteps}
           </div>
@@ -64,7 +168,6 @@ export function LessonSidebar({ collapsed, onToggle }: { collapsed: boolean; onT
       ) : (
         /* ── EXPANDED VIEW ── */
         <div className="flex flex-col h-full overflow-hidden">
-          {/* Header with Title and Collapse Arrow */}
           <div
             className="px-4 pt-3.5 pb-3 flex items-start justify-between gap-2"
             style={{ borderBottom: '1px solid rgba(110, 78, 55, 0.15)' }}
@@ -81,7 +184,6 @@ export function LessonSidebar({ collapsed, onToggle }: { collapsed: boolean; onT
               </div>
             </div>
 
-            {/* Collapse Arrow Button */}
             <button
               onClick={onToggle}
               className="w-7 h-7 rounded-lg flex items-center justify-center transition-all hover:scale-110 flex-shrink-0"

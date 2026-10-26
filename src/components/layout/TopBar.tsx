@@ -13,10 +13,12 @@ import {
   Flag,
   Volume2,
   VolumeX,
-  User,
+  Menu,
+  X,
   Shield,
   Sparkles,
 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export function TopBar() {
   const {
@@ -30,6 +32,7 @@ export function TopBar() {
   } = useLearningStore();
 
   const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleOpenLab = () => {
     if (!currentLesson) {
@@ -40,44 +43,62 @@ export function TopBar() {
     }
   };
 
+  const handleNav = (screen: 'landing' | 'dashboard' | 'lab' | 'race') => {
+    setMobileMenuOpen(false);
+    if (screen === 'lab') {
+      handleOpenLab();
+    } else {
+      goToScreen(screen);
+    }
+  };
+
   return (
     <>
       <header
-        className="flex items-center justify-between px-4 md:px-6 py-2.5 border-b z-40 flex-shrink-0"
+        className="flex items-center justify-between px-3 sm:px-6 py-2 border-b z-40 flex-shrink-0"
         style={{
           background: 'linear-gradient(to right, #1a130c, #2a1e13)',
           borderColor: 'rgba(110, 78, 55, 0.3)',
-          minHeight: 56,
+          minHeight: 52,
         }}
       >
         {/* Left: Brand Logo & Navigation */}
-        <div className="flex items-center gap-5">
+        <div className="flex items-center gap-3 sm:gap-5">
+          {/* Mobile Hamburger Button */}
           <button
-            onClick={() => goToScreen('landing')}
-            className="flex items-center gap-2.5 group transition-transform hover:scale-105"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="md:hidden p-1.5 rounded-lg transition-colors hover:bg-mocha-900/40 text-platinum"
+            aria-label="Toggle Navigation Menu"
+          >
+            {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+          </button>
+
+          <button
+            onClick={() => handleNav('landing')}
+            className="flex items-center gap-2 group transition-transform hover:scale-105"
           >
             <div
-              className="w-8 h-8 rounded-lg flex items-center justify-center shadow-md transition-shadow group-hover:shadow-lg"
+              className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center shadow-md transition-shadow group-hover:shadow-lg flex-shrink-0"
               style={{
                 background: 'linear-gradient(135deg, #6F4E37, #5a3e2b)',
                 border: '1px solid rgba(229, 228, 226, 0.25)',
                 boxShadow: '0 0 14px rgba(110, 78, 55, 0.5)',
               }}
             >
-              <Code2 size={18} color="#E5E4E2" />
+              <Code2 size={16} color="#E5E4E2" />
             </div>
             <span
-              className="text-lg font-bold tracking-tight"
+              className="text-base sm:text-lg font-bold tracking-tight"
               style={{ color: '#E5E4E2' }}
             >
               Code<span style={{ color: '#E6E0F0' }}>Quest</span>
             </span>
           </button>
 
-          {/* Navigation tabs */}
+          {/* Desktop Navigation tabs */}
           <nav className="hidden md:flex items-center gap-1.5 ml-2">
             <button
-              onClick={() => goToScreen('landing')}
+              onClick={() => handleNav('landing')}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all"
               style={{
                 background: currentScreen === 'landing' ? 'rgba(110, 78, 55, 0.3)' : 'transparent',
@@ -90,7 +111,7 @@ export function TopBar() {
             </button>
 
             <button
-              onClick={() => goToScreen('dashboard')}
+              onClick={() => handleNav('dashboard')}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all"
               style={{
                 background: currentScreen === 'dashboard' ? 'rgba(110, 78, 55, 0.3)' : 'transparent',
@@ -103,7 +124,7 @@ export function TopBar() {
             </button>
 
             <button
-              onClick={handleOpenLab}
+              onClick={() => handleNav('lab')}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all"
               style={{
                 background: (currentScreen === 'lab' || currentScreen === 'playground') ? 'rgba(110, 78, 55, 0.3)' : 'transparent',
@@ -116,7 +137,7 @@ export function TopBar() {
             </button>
 
             <button
-              onClick={() => goToScreen('race')}
+              onClick={() => handleNav('race')}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all"
               style={{
                 background: currentScreen === 'race' ? 'rgba(110, 78, 55, 0.3)' : 'transparent',
@@ -130,11 +151,11 @@ export function TopBar() {
           </nav>
         </div>
 
-        {/* Center: Breadcrumbs when deep in a lesson */}
+        {/* Center: Breadcrumbs when deep in a lesson (Desktop) */}
         {currentLesson && (currentScreen === 'lab' || currentScreen === 'results') && (
           <div className="hidden xl:flex items-center gap-2 text-xs" style={{ color: '#a8a7a5' }}>
             <button
-              onClick={() => goToScreen('dashboard')}
+              onClick={() => handleNav('dashboard')}
               className="flex items-center gap-1 hover:text-white transition-colors"
               style={{ color: '#a8a7a5' }}
             >
@@ -149,7 +170,7 @@ export function TopBar() {
         )}
 
         {/* Right side: Audio, User Profile / Google Sign-In, and CTA */}
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-2 sm:gap-2.5">
           {/* Audio toggle */}
           <button
             onClick={toggleSound}
@@ -161,14 +182,14 @@ export function TopBar() {
               border: isSoundEnabled ? '1px solid #6F4E37' : '1px solid rgba(110, 78, 55, 0.2)',
             }}
           >
-            {isSoundEnabled ? <Volume2 size={15} /> : <VolumeX size={15} />}
+            {isSoundEnabled ? <Volume2 size={14} /> : <VolumeX size={14} />}
           </button>
 
           {/* User Profile / Google Sign-In Button */}
           {user ? (
             <button
               onClick={() => setAuthModalOpen(true)}
-              className="flex items-center gap-2 px-2.5 py-1 rounded-xl transition-all hover:scale-105 cursor-pointer"
+              className="flex items-center gap-1.5 px-2 py-1 rounded-xl transition-all hover:scale-105 cursor-pointer"
               style={{
                 background: 'rgba(230, 224, 240, 0.1)',
                 border: '1px solid rgba(230, 224, 240, 0.3)',
@@ -194,7 +215,7 @@ export function TopBar() {
           ) : (
             <button
               onClick={() => setAuthModalOpen(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all hover:scale-105 active:scale-95 cursor-pointer"
+              className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-xs font-semibold transition-all hover:scale-105 active:scale-95 cursor-pointer"
               style={{
                 background: 'rgba(230, 224, 240, 0.12)',
                 color: '#E6E0F0',
@@ -202,7 +223,6 @@ export function TopBar() {
               }}
               title="Sign in with Google or test with demo account"
             >
-              {/* Google G icon */}
               <svg className="w-3.5 h-3.5" viewBox="0 0 24 24">
                 <path
                   fill="#E6E0F0"
@@ -221,14 +241,14 @@ export function TopBar() {
                   d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
                 />
               </svg>
-              <span>Sign In</span>
+              <span className="hidden sm:inline">Sign In</span>
             </button>
           )}
 
           {currentScreen !== 'lab' && (
             <button
               onClick={handleOpenLab}
-              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all hover:scale-105"
+              className="flex items-center gap-1 px-3 py-1 rounded-lg text-xs font-semibold transition-all hover:scale-105"
               style={{
                 background: 'linear-gradient(135deg, #6F4E37, #5a3e2b)',
                 color: '#E5E4E2',
@@ -236,12 +256,96 @@ export function TopBar() {
                 boxShadow: '0 0 16px rgba(110, 78, 55, 0.4)',
               }}
             >
-              <Play size={11} fill="currentColor" />
-              <span>Open Lab</span>
+              <Play size={10} fill="currentColor" />
+              <span className="text-xs">Lab</span>
             </button>
           )}
         </div>
       </header>
+
+      {/* Mobile Drawer Menu */}
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="md:hidden z-40 border-b overflow-hidden"
+            style={{
+              background: '#130d07',
+              borderColor: 'rgba(110, 78, 55, 0.3)',
+            }}
+          >
+            <div className="px-4 py-3 space-y-1.5">
+              <button
+                onClick={() => handleNav('landing')}
+                className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium transition-all text-left"
+                style={{
+                  background: currentScreen === 'landing' ? 'rgba(110, 78, 55, 0.35)' : 'transparent',
+                  color: currentScreen === 'landing' ? '#E6E0F0' : '#E5E4E2',
+                }}
+              >
+                <Compass size={15} className="text-lavender-300" />
+                <span>3D Showcase (Landing)</span>
+              </button>
+
+              <button
+                onClick={() => handleNav('dashboard')}
+                className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium transition-all text-left"
+                style={{
+                  background: currentScreen === 'dashboard' ? 'rgba(110, 78, 55, 0.35)' : 'transparent',
+                  color: currentScreen === 'dashboard' ? '#E6E0F0' : '#E5E4E2',
+                }}
+              >
+                <Layers size={15} className="text-lavender-300" />
+                <span>Mission Control (Lessons)</span>
+              </button>
+
+              <button
+                onClick={() => handleNav('lab')}
+                className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium transition-all text-left"
+                style={{
+                  background: (currentScreen === 'lab' || currentScreen === 'playground') ? 'rgba(110, 78, 55, 0.35)' : 'transparent',
+                  color: (currentScreen === 'lab' || currentScreen === 'playground') ? '#E6E0F0' : '#E5E4E2',
+                }}
+              >
+                <Play size={14} fill="currentColor" className="text-mocha-300" />
+                <span>Execution Lab</span>
+              </button>
+
+              <button
+                onClick={() => handleNav('race')}
+                className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium transition-all text-left"
+                style={{
+                  background: currentScreen === 'race' ? 'rgba(110, 78, 55, 0.35)' : 'transparent',
+                  color: currentScreen === 'race' ? '#E6E0F0' : '#E5E4E2',
+                }}
+              >
+                <Flag size={14} className="text-lavender-200" />
+                <span>Algorithm Race Arena</span>
+              </button>
+
+              {user && (
+                <div className="pt-2 mt-2 border-t border-mocha-900/40 flex items-center justify-between text-xs px-2">
+                  <div className="flex items-center gap-2">
+                    <span className="text-lavender font-bold">{user.name}</span>
+                    <span className="text-[10px] text-[#888] font-mono">({user.xp} XP)</span>
+                  </div>
+                  <button
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      setAuthModalOpen(true);
+                    }}
+                    className="text-[11px] text-lavender-300 underline"
+                  >
+                    Profile
+                  </button>
+                </div>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Auth Modal */}
       <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} />

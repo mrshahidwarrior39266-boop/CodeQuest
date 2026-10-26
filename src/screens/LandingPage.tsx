@@ -320,12 +320,12 @@ export function LandingPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.7, duration: 0.6 }}
-            className="flex items-center justify-center gap-10 mt-14"
+            className="flex items-center justify-center gap-4 sm:gap-10 mt-8 sm:mt-14 flex-wrap"
           >
             <StatPill value="240" label="Frame Perfect" />
-            <div className="w-px h-8" style={{ background: 'rgba(110,78,55,0.3)' }} />
+            <div className="hidden sm:block w-px h-8" style={{ background: 'rgba(110,78,55,0.3)' }} />
             <StatPill value="21" label="Execution Steps" />
-            <div className="w-px h-8" style={{ background: 'rgba(110,78,55,0.3)' }} />
+            <div className="hidden sm:block w-px h-8" style={{ background: 'rgba(110,78,55,0.3)' }} />
             <StatPill value="3×" label="Speed Modes" />
           </motion.div>
         </div>
@@ -435,7 +435,7 @@ export function LandingPage() {
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="max-w-3xl mx-auto rounded-3xl overflow-hidden relative text-center p-14"
+          className="max-w-3xl mx-auto rounded-3xl overflow-hidden relative text-center p-6 sm:p-14"
           style={{
             background: 'linear-gradient(135deg, #2a1e13 0%, #1a130c 50%, #1a0f1a 100%)',
             border: '1px solid rgba(110,78,55,0.35)',

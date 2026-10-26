@@ -119,10 +119,10 @@ export function Dashboard() {
 
   return (
     <div className="flex-1 overflow-y-auto" style={{ background: '#0d0804' }}>
-      <div className="max-w-6xl mx-auto px-6 py-10">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
 
         {/* Header Navigation link back to 3D */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center justify-between mb-6 sm:mb-8 flex-wrap gap-2">
           <div className="flex items-center gap-2">
             <div
               className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold"
@@ -139,7 +139,7 @@ export function Dashboard() {
 
           <button
             onClick={() => goToScreen('landing')}
-            className="flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all hover:scale-105"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all hover:scale-105"
             style={{
               background: 'rgba(229, 228, 226, 0.06)',
               color: '#E5E4E2',
@@ -147,7 +147,7 @@ export function Dashboard() {
             }}
           >
             <Compass size={13} color="#E6E0F0" />
-            <span>View 3D Live Experience</span>
+            <span>3D Showcase</span>
           </button>
         </div>
 
@@ -156,27 +156,27 @@ export function Dashboard() {
           initial={{ opacity: 0, y: -16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="mb-10"
+          className="mb-8 sm:mb-10"
         >
-          <h1 className="text-4xl md:text-5xl font-extrabold mb-3 leading-tight" style={{ color: '#E5E4E2' }}>
+          <h1 className="text-2xl sm:text-4xl md:text-5xl font-extrabold mb-3 leading-tight" style={{ color: '#E5E4E2' }}>
             Interactive <span className="text-gradient-mocha">Execution Playground</span>
           </h1>
-          <p className="text-base md:text-lg max-w-2xl leading-relaxed" style={{ color: '#a8a7a5' }}>
+          <p className="text-sm sm:text-base md:text-lg max-w-2xl leading-relaxed" style={{ color: '#a8a7a5' }}>
             Choose a challenge to step inside the engine. Every line of code is synchronized with variable cards,
             spring-animated arrays, and time-travel replay.
           </p>
 
           {/* Stats Bar */}
-          <div className="flex items-center gap-8 mt-6">
+          <div className="flex items-center gap-4 sm:gap-8 mt-6 flex-wrap">
             {[
               { label: 'Available Modules', value: lessons.filter(l => l.trace.length > 0).length, icon: <Layers size={14} color="#6F4E37" /> },
               { label: 'Completed', value: completedLessons.length, icon: <Trophy size={14} color="#E6E0F0" /> },
               { label: 'XP Earned', value: completedLessons.length * 120, icon: <Star size={14} color="#d4a882" /> },
             ].map((stat) => (
-              <div key={stat.label} className="flex items-center gap-2.5">
+              <div key={stat.label} className="flex items-center gap-2">
                 <span>{stat.icon}</span>
-                <span className="font-bold text-xl" style={{ color: '#E5E4E2' }}>{stat.value}</span>
-                <span className="text-xs uppercase tracking-wider" style={{ color: '#686765' }}>{stat.label}</span>
+                <span className="font-bold text-lg sm:text-xl" style={{ color: '#E5E4E2' }}>{stat.value}</span>
+                <span className="text-[10px] sm:text-xs uppercase tracking-wider" style={{ color: '#686765' }}>{stat.label}</span>
               </div>
             ))}
           </div>

@@ -33,16 +33,8 @@ function ControlBtn({
       onClick={onClick}
       disabled={disabled}
       title={title}
+      className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center transition-all flex-shrink-0 cursor-pointer active:scale-95"
       style={{
-        width: 36,
-        height: 36,
-        borderRadius: 8,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        cursor: disabled ? 'not-allowed' : 'pointer',
-        transition: 'all 0.15s ease',
-        flexShrink: 0,
         background: isPrimary
           ? disabled
             ? '#3d2a1c'
@@ -50,17 +42,7 @@ function ControlBtn({
           : 'rgba(229, 228, 226, 0.05)',
         color: disabled ? '#505050' : isPrimary ? '#E5E4E2' : '#a8a7a5',
         border: isPrimary ? '1px solid rgba(229, 228, 226, 0.2)' : '1px solid rgba(110, 78, 55, 0.25)',
-        boxShadow: isPrimary && !disabled ? '0 0 16px rgba(110, 78, 55, 0.4)' : 'none',
-      }}
-      onMouseEnter={(e) => {
-        if (!disabled) {
-          (e.currentTarget as HTMLButtonElement).style.transform = 'scale(1.08)';
-          if (!isPrimary) (e.currentTarget as HTMLButtonElement).style.borderColor = '#6F4E37';
-        }
-      }}
-      onMouseLeave={(e) => {
-        (e.currentTarget as HTMLButtonElement).style.transform = 'scale(1)';
-        if (!isPrimary) (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(110, 78, 55, 0.25)';
+        boxShadow: isPrimary && !disabled ? '0 0 14px rgba(110, 78, 55, 0.4)' : 'none',
       }}
     >
       {children}
@@ -94,26 +76,25 @@ export function ExecutionToolbar() {
   };
 
   return (
-    <div className="px-4 py-2.5 flex items-center gap-3 flex-wrap justify-between" style={{ minHeight: 52 }}>
+    <div className="px-3 sm:px-4 py-2 flex items-center gap-2 sm:gap-3 flex-wrap justify-between" style={{ minHeight: 46 }}>
       {/* Left: Step counter & playback controls */}
-      <div className="flex items-center gap-2">
-        <div className="text-xs font-mono pr-1.5" style={{ color: '#686765', minWidth: 64 }}>
-          Step{' '}
+      <div className="flex items-center gap-1.5 sm:gap-2">
+        <div className="text-[11px] sm:text-xs font-mono pr-1 text-[#686765]">
           <span style={{ color: '#E6E0F0', fontWeight: 700 }}>
             {currentStepIndex + 1}
           </span>
-          <span> / {totalSteps}</span>
+          <span>/{totalSteps}</span>
         </div>
 
-        {/* Buttons */}
+        {/* Playback Buttons */}
         <ControlBtn onClick={reset} disabled={isFirst} title="Reset">
-          <RotateCcw size={14} />
+          <RotateCcw size={13} />
         </ControlBtn>
         <ControlBtn onClick={() => jumpToStep(0)} disabled={isFirst} title="First Step">
-          <SkipBack size={14} />
+          <SkipBack size={13} />
         </ControlBtn>
         <ControlBtn onClick={prevStep} disabled={isFirst} title="Previous Step">
-          <ChevronLeft size={15} />
+          <ChevronLeft size={14} />
         </ControlBtn>
 
         {/* Play/Pause Toggle */}
@@ -122,81 +103,59 @@ export function ExecutionToolbar() {
           variant="primary"
           title={isPlaying ? 'Pause execution' : isLast ? 'Finish lesson' : 'Play execution'}
         >
-          {isPlaying ? <Pause size={15} fill="currentColor" /> : <Play size={15} fill="currentColor" />}
+          {isPlaying ? <Pause size={14} fill="currentColor" /> : <Play size={14} fill="currentColor" />}
         </ControlBtn>
 
         <ControlBtn onClick={nextStep} disabled={isLast} title="Next Step">
-          <ChevronRight size={15} />
+          <ChevronRight size={14} />
         </ControlBtn>
         <ControlBtn onClick={() => jumpToStep(totalSteps - 1)} disabled={isLast} title="Last Step">
-          <SkipForward size={14} />
+          <SkipForward size={13} />
         </ControlBtn>
 
         {/* Audio Sound Toggle */}
         <button
           onClick={toggleSound}
           title={isSoundEnabled ? 'Mute audio' : 'Unmute audio'}
-          className="p-2 rounded-lg text-xs transition-all hover:scale-105"
+          className="p-1.5 rounded-lg text-xs transition-all hover:scale-105"
           style={{
             background: isSoundEnabled ? 'rgba(110, 78, 55, 0.25)' : 'rgba(229, 228, 226, 0.04)',
             color: isSoundEnabled ? '#E6E0F0' : '#686765',
             border: isSoundEnabled ? '1px solid #6F4E37' : '1px solid rgba(110, 78, 55, 0.2)',
           }}
         >
-          {isSoundEnabled ? <Volume2 size={14} /> : <VolumeX size={14} />}
+          {isSoundEnabled ? <Volume2 size={13} /> : <VolumeX size={13} />}
         </button>
+      </div>
 
+      {/* Right: Speed, Predict Toggle & Finish CTA */}
+      <div className="flex items-center gap-1.5 sm:gap-2">
         {/* Predict Mode Toggle */}
         <button
           onClick={() => setPredictMode(!predictMode)}
           title="Predict next step challenge mode"
-          className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all hover:scale-105"
+          className="flex items-center gap-1 px-2 py-1 rounded-lg text-[11px] font-semibold transition-all hover:scale-105"
           style={{
             background: predictMode ? 'rgba(230, 224, 240, 0.18)' : 'rgba(229, 228, 226, 0.04)',
             color: predictMode ? '#E6E0F0' : '#686765',
             border: predictMode ? '1px solid #E6E0F0' : '1px solid rgba(110, 78, 55, 0.2)',
           }}
         >
-          <Sparkles size={12} color={predictMode ? '#E6E0F0' : '#686765'} />
-          <span className="hidden sm:inline">Predict Mode:</span>
-          <span>{predictMode ? 'ON' : 'OFF'}</span>
-        </button>
-      </div>
-
-      {/* Right: Speed, Race Mode & Finish CTA */}
-      <div className="flex items-center gap-2.5">
-        {/* Race Mode Shortcut */}
-        <button
-          onClick={() => goToScreen('race')}
-          className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all hover:scale-105"
-          style={{
-            background: 'rgba(110, 78, 55, 0.2)',
-            color: '#E5E4E2',
-            border: '1px solid rgba(110, 78, 55, 0.35)',
-          }}
-          title="Open Algorithm Race"
-        >
-          <Flag size={12} color="#E6E0F0" />
-          <span className="hidden md:inline">Algorithm Race</span>
+          <Sparkles size={11} color={predictMode ? '#E6E0F0' : '#686765'} />
+          <span>{predictMode ? 'Predict ON' : 'Predict'}</span>
         </button>
 
         {/* Speed knobs */}
         <div className="flex items-center gap-1">
-          <Gauge size={13} color="#686765" />
-          <div className="flex gap-1">
+          <div className="flex gap-0.5 sm:gap-1">
             {SPEEDS.map((s) => {
               const active = speed === s.value;
               return (
                 <button
                   key={s.value}
                   onClick={() => setSpeed(s.value)}
+                  className="px-1.5 py-0.5 rounded text-[10px] font-mono font-semibold transition-all"
                   style={{
-                    padding: '3px 7px',
-                    borderRadius: 6,
-                    fontSize: 11,
-                    fontWeight: 600,
-                    cursor: 'pointer',
-                    transition: 'all 0.15s ease',
                     background: active ? 'rgba(110, 78, 55, 0.4)' : 'rgba(229, 228, 226, 0.04)',
                     color: active ? '#E6E0F0' : '#686765',
                     border: active ? '1px solid #6F4E37' : '1px solid rgba(229, 228, 226, 0.06)',
@@ -213,7 +172,7 @@ export function ExecutionToolbar() {
         {isLast && (
           <button
             onClick={completeLesson}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all hover:scale-105"
+            className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold transition-all hover:scale-105"
             style={{
               background: 'linear-gradient(135deg, #6F4E37, #5a3e2b)',
               color: '#E5E4E2',
@@ -221,7 +180,7 @@ export function ExecutionToolbar() {
               boxShadow: '0 0 16px rgba(110, 78, 55, 0.5)',
             }}
           >
-            <Trophy size={13} color="#E6E0F0" />
+            <Trophy size={12} color="#E6E0F0" />
             <span>Finish</span>
           </button>
         )}

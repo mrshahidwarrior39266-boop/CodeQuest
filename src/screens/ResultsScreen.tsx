@@ -41,7 +41,7 @@ export function ResultsScreen() {
 
   return (
     <div
-      className="flex-1 flex items-center justify-center overflow-y-auto py-12 px-6"
+      className="flex-1 flex items-center justify-center overflow-y-auto py-8 sm:py-12 px-4 sm:px-6"
       style={{ background: '#0d0804' }}
     >
       <motion.div
@@ -174,7 +174,7 @@ export function ResultsScreen() {
             </button>
           )}
 
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3">
             <button
               onClick={() => setLesson(currentLesson)}
               className="flex items-center justify-center gap-1.5 px-4 py-3 rounded-xl font-semibold text-xs transition-all hover:scale-105"
